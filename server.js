@@ -29,17 +29,23 @@ app.use('/api/news', require('./routes/news'));
 
 // Health Check
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'EcoWatch API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    version: '2.0.0'
   });
 });
 
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Welcome to EcoWatch API',
-    version: '1.0.0',
+    version: '2.0.0',
+    features: {
+      cachedImpacts: true,
+      cachedNews: true,
+      backgroundJobs: true
+    },
     endpoints: {
       auth: '/api/auth',
       petitions: '/api/petitions',
@@ -62,20 +68,29 @@ app.use((err, req, res, next) => {
 
 // 404 Handler
 app.use((req, res) => {
-  res.status(404).json({ 
-    success: false, 
-    message: 'Route not found' 
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
   });
 });
 
 const PORT = process.env.PORT || 5000;
+
+// Start server and background jobs
 app.listen(PORT, () => {
-  console.log('='.repeat(50));
-  console.log(`🚀 EcoWatch API Server`);
+  console.log('='.repeat(60));
+  console.log('🚀 EcoWatch API Server v2.0');
   console.log(`📡 Port: ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Client URL: ${process.env.CLIENT_URL || 'http://localhost:3000'}`);
-  console.log('='.repeat(50));
+  console.log('='.repeat(60));
+
+  // Start background jobs
+  const { startNewsRefreshJob } = require('./jobs/newsRefresh');
+  startNewsRefreshJob();
+
+  console.log('✅ Background jobs initialized');
+  console.log('='.repeat(60));
 });
 
 module.exports = app;

@@ -1,6 +1,3 @@
-// ============================================
-// server/controllers/authController.js
-// ============================================
 const { admin, db } = require('../middleware/auth');
 
 exports.register = async (req, res) => {

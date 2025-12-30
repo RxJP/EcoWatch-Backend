@@ -1,6 +1,3 @@
-// ============================================
-// server/seedZones.js
-// ============================================
 const admin = require('firebase-admin');
 const dotenv = require('dotenv');
 
